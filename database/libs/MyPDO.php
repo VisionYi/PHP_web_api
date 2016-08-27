@@ -30,11 +30,13 @@ class MyPDO {
 		foreach ($bind_data as $key => $value) {
 			$this->stmt->bindValue($key, $value, is_numeric($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
 		}
-		$this->stmt->execute();
+		return $this->stmt->execute();
 	}
 
 	public function bindQuery($sql, array $bind_data=[]) {
-		$this->_prepare_bind($sql, $bind_data);
+		if($this->_prepare_bind($sql, $bind_data) === false){
+			return false;
+		}
 		return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
@@ -50,9 +52,7 @@ class MyPDO {
 		$bind_val_key = array_keys($bind_data);
 		$sql = "INSERT INTO $table (id," . implode(',', $columns) . ") VALUES ($insertId," . implode(',', $bind_val_key) . ")";
 
-		$this->_prepare_bind($sql, $bind_data);
-
-		return $insertId;
+		return $this->_prepare_bind($sql, $bind_data);
 	}
 
 	public function bindUpdate($table="", array $data=[], $whereClause="") {
@@ -65,12 +65,13 @@ class MyPDO {
 		}
 
 		$sql = "UPDATE $table SET " . implode(',', $bind_temp) . " WHERE {$whereClause} ";
-		$this->_prepare_bind($sql, $bind_data);
+
+		return $this->_prepare_bind($sql, $bind_data);
 	}
 
 	public function dbDelete($table='' ,$whereClause="") {
 		$sql = "DELETE FROM $table WHERE {$whereClause}";
-		$this->pdo->exec($sql);
+		return $this->pdo->exec($sql);
 	}
 
 	public function getLast_Id($table='') {

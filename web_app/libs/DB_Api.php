@@ -15,7 +15,7 @@ class DB_Api {
      * 輸出json格式
      * @param  array  $data 取的資料
      */
-    public function output(array $data){
+    public function output($data){
         echo json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 }
