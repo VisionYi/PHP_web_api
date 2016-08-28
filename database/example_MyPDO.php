@@ -30,7 +30,7 @@
 
 // $skill = '%angular%';
 // $sql = "SELECT * FROM $table WHERE skills LIKE :_skill ORDER BY name LIMIT :_limit" ;
-// $query = $mypdo->bindQuery($sql ,[
+// $query = $mypdo->dbQuery($sql ,[
 //         ':_skill' => $skill ,
 //         ':_limit' => 10
 // ]);
@@ -43,7 +43,7 @@
 //         'age'  => '1000',
 //         'skills' => 'database U'
 // ];
-// $mypdo->bindUpdate($table ,$select ,"id = 19");
+// $mypdo->dbUpdate($table ,$select ,"id = 19");
 
 // $mypdo->showError();
 // $mypdo->stmt = null;
@@ -54,13 +54,14 @@
 //
 // require_once 'libs/MyPDO.php';
 
+// 取得Post的資料
 // $dataJson = file_get_contents("php://input");
 // $data = json_decode($dataJson,true);
 
 // $mypdo = new MyPDO();
 // $table = 'pdoTest';
 
-// $query = $mypdo->bindQuery("SELECT * FROM $table WHERE id=" . $data['id']);
+// $query = $mypdo->dbQuery("SELECT * FROM $table WHERE id=" . $data['id']);
 // $mypdo->closeDB();
 
 // echo json_encode($query[0],JSON_UNESCAPED_UNICODE);
