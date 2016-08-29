@@ -7,19 +7,22 @@ class Api extends DB_Api {
     function __construct() {
         require_once 'database/libs/MyPDO.php';
         $this->DB = new MyPDO();
-        // $this->DB->debugDB_SQL = true;
+        // $this->DB->debugDB_SQL = true;       //debug檢測SQL的語法錯誤
     }
 
     function __destruct() {
         $this->DB->closeDB();
-        $this->check_json_error_log();
+        // $this->check_json_error_log();       //檢測當前Api印出的資訊 是否符合JSON格式
         exit();
     }
 
-    public function get($row = '') {
+    public function get($field = '') {
 
-        echo "Hellow api/get";
-
+        if(empty($field)) {
+            echo "Hellow api/get";
+        }else{
+            echo "Hellow api/get/$field";
+        }
     }
 }
 ?>
