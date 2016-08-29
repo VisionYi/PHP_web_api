@@ -54,7 +54,7 @@
 //
 // require_once 'libs/MyPDO.php';
 
-// 取得Post的資料
+// 取得Post的資料(AngularJS 專用)
 // $dataJson = file_get_contents("php://input");
 // $data = json_decode($dataJson,true);
 

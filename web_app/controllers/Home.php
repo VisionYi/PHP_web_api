@@ -2,7 +2,7 @@
 
 class Home extends Controller {
 
-    public function Index(){
+    public function Index() {
         echo "PHP_web_api <br><br>";
 
         // Testing DB connection

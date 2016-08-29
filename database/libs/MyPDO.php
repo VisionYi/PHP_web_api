@@ -5,7 +5,7 @@ class MyPDO {
 	private $dbms = ''; 			//資料庫類型
 	private $host = ''; 			//資料庫主機名
 	private $port = 3306; 			//資料庫連結port
-	private $dbName = ''; 			//使用的DB名稱
+	private $dbName = ''; 			//使用的DB庫名稱
 	private $encode = ''; 			//資料庫編碼方式(字符集)
 	private $user = ''; 			//資料庫連接用戶名
 	private $pass = ''; 			//對應的密碼

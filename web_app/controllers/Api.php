@@ -23,6 +23,7 @@ class Api extends DB_Api {
         }else{
             echo "Hellow api/get/$field";
         }
+
     }
 }
 ?>

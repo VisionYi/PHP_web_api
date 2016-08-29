@@ -38,6 +38,7 @@ class DB_Api {
         if(empty($content)){
             $content = ob_get_contents();
         }
+
         foreach ($replace_text as $key => $value) {
             $content = str_replace($key, $value, $content);
         }
