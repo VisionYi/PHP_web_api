@@ -1,4 +1,4 @@
-<div class="well ">
+<div>
     <h1>404 NOT FOUND!</h1>
     <h3>不好意思，找不到您要的網頁</h3>
 

@@ -24,25 +24,28 @@ class App {
 				$this->controller = $url[0];
 				unset($url[0]);
 			} else {
-				new _Error($url[0] ,1);
+				new _Error($url[0], 1);
 			}
-		} else if (!file_exists(ROOT_PATH . '/controllers/' . $this->controller . '.php')) {
-			new _Error($this->controller ,1);
+
+		} else
+		if (!file_exists(ROOT_PATH . '/controllers/' . $this->controller . '.php')) {
+			new _Error($this->controller, 1);
 		}
 
 		require_once ROOT_PATH . '/controllers/' . $this->controller . '.php';
 		$this->controller = new $this->controller;
-
 
 		if (isset($url[1])) {
 			if (method_exists($this->controller, $url[1])) {
 				$this->method = $url[1];
 				unset($url[1]);
 			} else {
-				new _Error($url[1] ,2);
+				new _Error($url[1], 2);
 			}
-		} else if (!method_exists($this->controller, $this->method)) {
-			new _Error($this->method ,2);
+
+		} else
+		if (!method_exists($this->controller, $this->method)) {
+			new _Error($this->method, 2);
 		}
 
 		$this->params = $url ? array_values($url) : [];
@@ -56,9 +59,9 @@ class App {
 	 * @return array() Url
 	 */
 	private function parseUrl() {
-		// $url = array();
+
 		if (isset($_GET['url'])) {
-			return $url = explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+			return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
 		}
 	}
 }
