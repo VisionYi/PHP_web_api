@@ -4,12 +4,8 @@
 // 預設根目錄
 define('ROOT_PATH', 'web_app');
 define('ERROR_View', 'Error.php');
+define('DEFLATE_URL', 'Home/Index');
 
-// Auto loading all library php file
-require_once 'libs/App.php';
-require_once 'libs/_Error.php';
-require_once 'libs/DB_Api.php';
-
-$app = new App();
+$app = new web_app\libs\App();
 
  ?>

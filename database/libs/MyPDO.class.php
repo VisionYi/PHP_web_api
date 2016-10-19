@@ -1,30 +1,33 @@
 <?php
+namespace database\libs;
+use \PDO;
 
+/**
+ * 待加上註解
+ */
 class MyPDO {
 
-	private $dbms = ''; 			//資料庫類型
-	private $host = ''; 			//資料庫主機名
-	private $port = 3306; 			//資料庫連結port
-	private $dbName = ''; 			//使用的DB庫名稱
-	private $encode = ''; 			//資料庫編碼方式(字符集)
-	private $user = ''; 			//資料庫連接用戶名
-	private $pass = ''; 			//對應的密碼
-	private $_data = [];
+	public $dbms = DBMS; 				//資料庫類型
+	public $host = HOST; 				//資料庫主機名
+	public $port = PORT; 				//資料庫連結port
+	public $dbName = DBNAME; 			//使用的DB庫名稱
+	public $encode = ENCODE; 			//資料庫編碼方式(字符集)
+	public $username = USERNAME; 		//資料庫連接用戶名
+	public $password = PASSWORD; 		//對應的密碼
 	public $pdo;
 	public $stmt;
-	public $debugDB_SQL = false;	//在子類別裡設為true,能檢測debug所有sql指令並顯示錯誤
+
+	//在子類別裡設為true,能檢測debug所有sql指令並顯示錯誤
+	public $debugDB_SQL = false;
 
 	function __construct() {
 		$dsn = "$this->dbms:host=$this->host;dbname=$this->dbName;port=$this->port;charset=$this->encode";
 		try {
-			$this->pdo = new PDO($dsn, $this->user, $this->pass);
+			$this->pdo = new PDO($dsn, $this->username, $this->password);
 			// echo "PDO connection success !! <br><br>";
 		}catch(PDOException $e) {
 			$error_msg = "PDO connection failed !! <br>Error: ". $e->getMessage();
 			echo $error_msg;
-
-			$error_msg = str_replace("<br>", "\\n", str_replace("'", "\'", $error_msg));
-			echo "<script>console.error('$error_msg');</script>";
 			exit();
 		}
 	}

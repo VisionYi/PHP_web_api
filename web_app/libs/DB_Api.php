@@ -1,8 +1,18 @@
 <?php
+namespace web_app\libs;
 
 class DB_Api {
-
+	// 是否有顯示出Error訊息
 	private $show_error = false;
+	protected $DB;
+
+	public function __construct($DB_library) {
+	    $this->DB = $DB_library;
+
+	    // 開始頁面輸出buffers
+	    ob_start();
+	}
+
 	/**
 	 * 取得前端http post時所傳送的json格式Data
 	 * @return array json轉變的Data
@@ -13,7 +23,7 @@ class DB_Api {
 	}
 
 	/**
-	 * 輸出json格式
+	 * 輸出json格式，中文可已顯示正常
 	 * @param  array  $data 取的資料
 	 */
 	public function output($data) {

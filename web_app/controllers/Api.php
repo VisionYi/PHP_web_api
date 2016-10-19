@@ -1,34 +1,37 @@
 <?php
+use database\libs\MyPDO;
+use web_app\libs\DB_Api;
 
 class Api extends DB_Api {
 
-	private $DB;
-
 	function __construct() {
-		require_once 'database/libs/MyPDO.php';
-		$this->DB = new MyPDO();
-		// $this->DB->debugDB_SQL = true;       //debug檢測SQL的語法錯誤
+	    DB_Api::__construct(new MyPDO());
 
-		ob_start();
+	    // Debug: 檢測SQL的語法錯誤
+	    // $this->DB->debugDB_SQL = true;
 	}
 
 	function __destruct() {
-		$this->DB->closeDB();
-		// $this->check_json_error_log();       //檢測當前Api印出的資訊 是否符合JSON格式
-		// $this->check_json_error_header(500, "Internal Server Error!!");
+	    $this->DB->closeDB();
 
-		// ob_end_clean();
-		exit();
+	    // Debug: 檢測印出的資訊是否符合JSON格式,使用JavaScript的console.error()
+	    // $this->DB->check_json_error_log();
+
+	    // Debug: 檢測印出的資訊是否符合JSON格式,使用HTTP header顯示錯誤代碼與資訊
+	    // $this->DB->check_json_error_header(500, "Internal Server Error!!");
+
+	    // 清除頁面的所有輸出
+	    // ob_end_clean();
+
+	    exit();
 	}
 
 	public function get($field = '') {
-
 		if (empty($field)) {
 			echo "Hellow: http://localhost/api/get";
 		} else {
 			echo "Hellow: http://localhost/api/get/$field";
 		}
-
 	}
 }
 ?>

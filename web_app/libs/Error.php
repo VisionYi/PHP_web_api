@@ -1,8 +1,10 @@
 <?php
+namespace web_app\libs;
+
 /**
  * 有錯誤就顯示 Error頁面
  */
-class _Error {
+class Error {
 
 	private $error_number;
 	private $_file;
