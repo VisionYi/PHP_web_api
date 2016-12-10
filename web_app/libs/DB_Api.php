@@ -4,14 +4,6 @@ namespace web_app\libs;
 class DB_Api {
 	// 是否有顯示出Error訊息
 	private $show_error = false;
-	protected $DB;
-
-	public function __construct($DB_library) {
-	    $this->DB = $DB_library;
-
-	    // 開始頁面輸出buffers
-	    ob_start();
-	}
 
 	/**
 	 * 取得前端http post時所傳送的json格式Data
@@ -39,7 +31,6 @@ class DB_Api {
 	 */
 	public function error_log($content = '') {
 		$replace_text = [
-			"'" => "\'",
 			"\r" => "\\r",
 			"\n" => "\\n",
 			"\t" => "\\t",
@@ -49,6 +40,8 @@ class DB_Api {
 		if (empty($content)) {
 			$content = ob_get_contents();
 		}
+		$content = addSlashes($content);
+
 		foreach ($replace_text as $key => $value) {
 			$content = str_replace($key, $value, $content);
 		}
@@ -68,8 +61,8 @@ class DB_Api {
 		json_decode($content);
 
 		if (json_last_error() !== JSON_ERROR_NONE &&
-            !$this->show_error && !empty($content)) {
-
+            !$this->show_error && !empty($content))
+		{
 			$alert = "This is not a JSON format: \n";
 			$this->error_log($alert . $content);
 			$this->show_error = false;
@@ -91,9 +84,9 @@ class DB_Api {
 		json_decode($content);
 
 		if (json_last_error() !== JSON_ERROR_NONE &&
-            !$this->show_error && !empty($content)) {
-
-			@header($_SERVER['SERVER_PROTOCOL'] . " $code $error_msg", true, $code);
+            !$this->show_error && !empty($content))
+		{
+			@header($_SERVER['SERVER_PROTOCOL']." $code $error_msg", true, $code);
 
 			ob_end_clean();
 			echo "This is not a JSON format: \n" . $content;

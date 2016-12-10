@@ -8,9 +8,6 @@
 // Auto loading all library php file
 include_once __DIR__ . "/autoload.php";
 
-// 設定初始化 database
-require_once __DIR__ . "/database/init.php";
-
 // 設定初始化 web_app
 require_once __DIR__ . "/web_app/init.php";
 
