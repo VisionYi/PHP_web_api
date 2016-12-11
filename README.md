@@ -4,7 +4,9 @@
 * 2016-10-19: 
     - 使用autoLoading與namespace，檔案不用再一個一個include或require了
 * 2016-11-10: 
-    - 完善database 操作資料庫的library，剩下註解未加了。
+    - 完善database 操作資料庫的library，剩下註解未加了
+* 2016-11-11: 
+    - 修改web_app路徑下的libs之所有檔案
 * 下次增加:
     - 下另API DB自動新增database與table
     - POST與GET的簡單範例

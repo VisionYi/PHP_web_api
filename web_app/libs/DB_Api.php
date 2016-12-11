@@ -1,24 +1,30 @@
 <?php
+
 namespace web_app\libs;
 
-class DB_Api {
+class DB_Api
+{
 	// 是否有顯示出Error訊息
-	private $show_error = false;
+	protected $show_error = false;
 
 	/**
 	 * 取得前端http post時所傳送的json格式Data
+	 *
 	 * @return array json轉變的Data
 	 */
-	public function get_postData() {
+	public function getPostData()
+	{
 		$dataJson = file_get_contents("php://input");
 		return json_decode($dataJson, true);
 	}
 
 	/**
 	 * 輸出json格式，中文可已顯示正常
+	 *
 	 * @param  array  $data 取的資料
 	 */
-	public function output($data) {
+	public function output(array $data)
+	{
 		echo json_encode($data, JSON_UNESCAPED_UNICODE);
 	}
 
@@ -29,20 +35,23 @@ class DB_Api {
 	 *
 	 * @param  string $content 為Log的訊息
 	 */
-	public function error_log($content = '') {
-		$replace_text = [
+	public function error_log($content = '')
+	{
+		$replace_text = array(
 			"\r" => "\\r",
 			"\n" => "\\n",
 			"\t" => "\\t",
 			"<br>" => "\\n",
-		];
+		);
 
-		if (empty($content)) {
+		if (empty($content))
+		{
 			$content = ob_get_contents();
 		}
 		$content = addSlashes($content);
 
-		foreach ($replace_text as $key => $value) {
+		foreach ($replace_text as $key => $value)
+		{
 			$content = str_replace($key, $value, $content);
 		}
 
@@ -54,14 +63,15 @@ class DB_Api {
 	 * 檢查當前的頁面印出的所有資料是否為 Json 格式, 不是就error_log()頁面上所有的文字
 	 * 此函式適合放在 function __destruct()裡面
 	 * [只適合使用在web_api後端偵錯上]
-	 *
 	 */
-	public function check_json_error_log() {
+	public function check_json_error_log()
+	{
 		$content = ob_get_contents();
 		json_decode($content);
 
-		if (json_last_error() !== JSON_ERROR_NONE &&
-            !$this->show_error && !empty($content))
+		if (json_last_error() !== JSON_ERROR_NONE
+			&& !$this->show_error
+			&& !empty($content))
 		{
 			$alert = "This is not a JSON format: \n";
 			$this->error_log($alert . $content);
@@ -78,13 +88,15 @@ class DB_Api {
 	 * @param  int    $code      http協定 錯誤代碼
 	 * @param  string $error_msg 訊息內容
 	 */
-	public function check_json_error_header($code, $error_msg = '') {
+	public function check_json_error_header($code, $error_msg = '')
+	{
 		$content = ob_get_contents();
 		$content = str_replace("<br>", "\n", $content);
 		json_decode($content);
 
-		if (json_last_error() !== JSON_ERROR_NONE &&
-            !$this->show_error && !empty($content))
+		if (json_last_error() !== JSON_ERROR_NONE
+			&& !$this->show_error
+			&& !empty($content))
 		{
 			@header($_SERVER['SERVER_PROTOCOL']." $code $error_msg", true, $code);
 
@@ -93,5 +105,3 @@ class DB_Api {
 		}
 	}
 }
-
-?>

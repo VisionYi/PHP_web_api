@@ -1,6 +1,9 @@
 <?php
+
 namespace web_app\libs;
-use web_app\libs\Error;
+
+use web_app\libs\ErrorPage;
+use web_app\Config;
 
 /**
  * 1. 解析url 呼叫類別裡的方法函式
@@ -12,60 +15,117 @@ use web_app\libs\Error;
  * 3. 沒輸入url的話, 預設為 /Home/Index
  * 4. 資料夾不存在會有error判斷
  */
-class App {
+class App
+{
+	protected $def_controller = 'Home';
+	protected $def_method = 'Index';
+	protected $root_path_controllers = 'main/controllers/';
 
-	function __construct() {
+	function __construct()
+	{
+		// 初始化所需參數
+		$this->init(Config::DEFAULT_URL, Config::ROOT_PATH_CONTROLLERS);
+		$controller = $this->def_controller;
+		$method = $this->def_method;
 
-		$deflate_url = explode('/', trim(DEFLATE_URL, '/'));
-		$controller = $deflate_url[0];
-		$method = $deflate_url[1];
-
+		$error = new ErrorPage;
 		$url = $this->parseUrl();
 
-		if (isset($url[0])) {
-			if (file_exists(ROOT_PATH . '/controllers/' . $url[0] . '.php')) {
+		$namespace_path_ctrl = str_replace('/', '\\', '/' . $this->root_path_controllers . $controller);
+		$file_ctrl = $this->root_path_controllers . $controller . '.php';
+
+		if (isset($url[0]))
+		{
+			$namespace_path_ctrl = str_replace('/', '\\', '/' . $this->root_path_controllers . $url[0]);
+			$file_ctrl = $this->root_path_controllers . $url[0] . '.php';
+
+			if (!file_exists($file_ctrl))
+			{
+				$error->page_404($file_ctrl, $error::NO_CONTROLLER);
+			}
+			else if (!class_exists($namespace_path_ctrl))
+			{
+				$error->page_404("$file_ctrl, [$url[0]] 類別", $error::NO_CONTROLLER);
+			}
+			else {
 				$controller = $url[0];
-				unset($url[0]);
-			} else {
-				new Error($url[0], 1);
 			}
-
-		} else
-		if (!file_exists(ROOT_PATH . '/controllers/' . $controller . '.php')) {
-			new Error($controller, 1);
+		}
+		else if (!file_exists($file_ctrl))
+		{
+			$error->page_404($file_ctrl, $error::NO_CONTROLLER);
+		}
+		else if (!class_exists($namespace_path_ctrl))
+		{
+			$error->page_404("$file_ctrl, [$controller] 類別", $error::NO_CONTROLLER);
 		}
 
-		require_once ROOT_PATH . '/controllers/' . $controller . '.php';
-		$controller = new $controller;
+		$controller = new $namespace_path_ctrl;
 
-		if (isset($url[1])) {
-			if (method_exists($controller, $url[1])) {
+		if (isset($url[1]))
+		{
+			if (method_exists($controller, $url[1]))
+			{
 				$method = $url[1];
-				unset($url[1]);
-			} else {
-				new Error($url[1], 2);
 			}
-
-		} else
-		if (!method_exists($controller, $method)) {
-			new Error($method, 2);
+			else {
+				$error->page_404("$file_ctrl, [$url[1]] 方法", $error::NO_CONTROLLER);
+			}
+		}
+		else if (!method_exists($controller, $method))
+		{
+			$error->page_404("$file_ctrl, [$method] 方法", $error::NO_CONTROLLER);
 		}
 
+		unset($url[0]);
+		unset($url[1]);
 		$params = $url ? array_values($url) : [];
-		call_user_func_array([$controller, $method], $params);
+
+		call_user_func_array(array($controller, $method), $params);
 		unset($params);
 		exit();
 	}
 
 	/**
+	 * 初始化預設的參數，如果設置為空的話就不代入
+	 *
+	 * @param  string $deflate_url            預設基本首頁的url
+	 * @param  string $deflate_root_path_ctrl 預設Controllers的根目錄
+	 */
+	protected function init($default_url = '', $default_root_path_ctrl = '')
+	{
+		if (!empty($default_url))
+		{
+			$default_url = explode('/', trim($default_url, '/'));
+			$this->def_controller = $default_url[0];
+			$this->def_method = $default_url[1];
+		}
+
+		if (!empty($default_root_path_ctrl))
+		{
+			$this->root_path_controllers = trim($default_root_path_ctrl, '/') . '/';
+		}
+	}
+
+	/**
 	 * 抓取網址上的Url,再以'/'間隔分成好幾個字放進array()裡 ,順便過濾多餘的'/'
+	 *
 	 * @return array() Url
 	 */
-	private function parseUrl() {
-
-		if (isset($_GET['url'])) {
-			return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+	protected function parseUrl()
+	{
+		if (isset($_GET['url']))
+		{
+			return explode(
+				'/',
+				filter_var(
+					rtrim($_GET['url'], '/'),
+					FILTER_SANITIZE_URL
+				)
+			);
+		}
+		else {
+			return array();
 		}
 	}
 }
-?>
