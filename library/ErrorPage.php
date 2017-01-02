@@ -48,7 +48,6 @@ class ErrorPage
     public function errorMessage()
     {
         switch ($this->errorCode) {
-
             case self::NO_CONTROLLER:
                 echo "<b>[Controller]</b> 檔案: $this->filePath 不存在！<br>";
                 break;
@@ -59,6 +58,10 @@ class ErrorPage
 
             case self::NO_VIEW:
                 echo "<b>[View]</b> 檔案: $this->filePath 不存在！<br>";
+                break;
+
+            default:
+                echo "<b>Expection Error!!!</b>";
                 break;
         }
     }

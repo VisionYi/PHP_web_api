@@ -52,14 +52,9 @@ class App
      */
     protected function initial(array $config)
     {
-        if (isset($config['defaultUrl'])) {
-
-            $defaultUrl = explode('/', trim($config['defaultUrl'], '/'));
-            $this->controller = $defaultUrl[0];
-            $this->method = $defaultUrl[1];
-        } else {
-            throw new \Exception("Config/app.php: ['defaultUrl'] is not exist!\n");
-        }
+        $defaultUrl = explode('/', trim($config['defaultUrl'], '/'));
+        $this->controller = $defaultUrl[0];
+        $this->method = $defaultUrl[1];
 
         $this->pathControllers = trim($config['path']['controllers'], '/') . '/';
     }

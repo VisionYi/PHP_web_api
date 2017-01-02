@@ -64,19 +64,24 @@ class WebApi
      * 檢查當前的頁面印出的所有資料是否為 Json 格式, 不是就error_log()頁面上所有的文字
      * 此函式適合放在 function __destruct()裡面
      * [只適合使用在web_api後端偵錯上]
+     *
+     * @param bool $isCheck 設定是否啟動這個function檢查
      */
-    public function checkJsonErrorLog()
+    public function checkJsonErrorLog(bool $isCheck)
     {
-        $content = ob_get_contents();
-        json_decode($content);
+        if ($isCheck) {
 
-        if (json_last_error() !== JSON_ERROR_NONE
-            && !$this->showError
-            && !empty($content))
-        {
-            $alert = "This is not a JSON format: \n";
-            $this->errorLog($alert . $content);
-            $this->showError = false;
+            $content = ob_get_contents();
+            json_decode($content);
+
+            if (json_last_error() !== JSON_ERROR_NONE
+                && !$this->showError
+                && !empty($content))
+            {
+                $alert = "This is not a JSON format: \n";
+                $this->errorLog($alert . $content);
+                $this->showError = false;
+            }
         }
     }
 
@@ -87,9 +92,9 @@ class WebApi
      * [適合使用在前端顯示錯誤訊息上]
      *
      * @param  int    $code      http協定 錯誤代碼
-     * @param  string $error_msg 訊息內容
+     * @param  string $errorMessage 訊息內容
      */
-    public function checkJsonErrorHeader($code, $error_msg = '')
+    public function checkJsonErrorHeader($code, $errorMessage = '')
     {
         $content = ob_get_contents();
         $content = str_replace("<br>", "\n", $content);
@@ -99,7 +104,7 @@ class WebApi
             && !$this->showError
             && !empty($content))
         {
-            @header($_SERVER['SERVER_PROTOCOL'] . " $code $error_msg", true, $code);
+            @header($_SERVER['SERVER_PROTOCOL'] . " $code $errorMessage", true, $code);
 
             ob_end_clean();
             echo "This is not a JSON format: \n" . $content;
