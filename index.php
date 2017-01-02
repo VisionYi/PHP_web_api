@@ -10,5 +10,6 @@
 // Auto loading all library php file
 require_once __DIR__ . '/autoload.php';
 
-new web_app\libs\App();
- ?>
+$app = new \library\App();
+
+$app->run();

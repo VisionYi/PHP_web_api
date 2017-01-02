@@ -4,7 +4,7 @@
 
     <?php
         // 顯示目前的網址
-        echo "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] . "<br><br>";
-        $this->error_message();
+        echo "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "<br><br>";
+        $this->errorMessage();
     ?>
 </div>
