@@ -11,17 +11,9 @@ use \PDOException;
  */
 class MyPDO
 {
-    protected $default_dbms = 'mysql'; // 資料庫類型
-    protected $default_dsn  = [
-        'host'    => 'localhost',      // 資料庫主機名
-        'dbname'  => 'school_project', // 使用的DB庫名稱
-        'port'    => '3306',           // 資料庫連結port
-        'charset' => 'utf8',           // 資料庫編碼方式(字符集)
-    ];
-
-    protected $dsn      = '';      // [可以選擇直接填入，會忽略上面的default]
-    protected $username = 'root';  // 資料庫連接用戶名
-    protected $password = 'mysql'; // 對應的密碼
+    protected $dsn;
+    protected $username;
+    protected $password;
     protected $options;
     protected $pdo;
     protected $stm;
@@ -44,18 +36,30 @@ class MyPDO
             $this->username = $username;
             $this->password = $password;
             $this->options = $options;
-        }
+        } else {
 
-        if (empty($this->dsn)) {
+            $config = require 'config/database.php';
+            $connectInfo = $config['connections'][$config['default']];
+
+            if (array_key_exists('username', $connectInfo)
+             && array_key_exists('password', $connectInfo)) {
+
+                $this->username = $connectInfo['username'];
+                $this->password = $connectInfo['password'];
+                unset($connectInfo['username']);
+                unset($connectInfo['password']);
+            }
+
             $this->dsn = '';
-            $this->dsn .= $this->default_dbms . ':';
+            $this->dsn .= $config['default'] . ':';
 
-            foreach ($this->default_dsn as $key => $value) {
+            foreach ($connectInfo as $key => $value) {
                 if (!empty($value)) {
                     $this->dsn .= "$key=$value;";
                 }
             }
         }
+
         $this->connect();
     }
 
@@ -74,7 +78,6 @@ class MyPDO
 
     protected function prepareBind($statment, array $bind_data = [])
     {
-
         // prepare the statment
         $this->stm = $this->pdo->prepare($statment);
 
@@ -103,8 +106,7 @@ class MyPDO
         $this->endProfiler(__FUNCTION__, $statment, $bind_data);
         $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
 
-        $getFetchAll = ($result) ? $this->stm->fetchAll(PDO::FETCH_ASSOC) : false;
-        return $getFetchAll;
+        return ($result) ? $this->stm->fetchAll(PDO::FETCH_ASSOC) : $result;
     }
 
     public function insert($table = '', array $data = [])
@@ -167,12 +169,10 @@ class MyPDO
         return $affected_rows;
     }
 
-    public function gettotalFoundRows()
+    public function getTotalFoundRows()
     {
         $record = $this->query("SELECT found_rows()");
-        $getTotal = ($record) ? $record[0]['found_rows()'] : false;
-
-        return $getTotal;
+        return ($record) ? $record[0]['found_rows()'] : $record;
     }
 
     public function closeDB()
