@@ -56,7 +56,7 @@ class App
         $this->controller = $defaultUrl[0];
         $this->method = $defaultUrl[1];
 
-        $this->pathControllers = trim($config['path']['controllers'], '/') . '/';
+        $this->pathControllers = trim($config['path']['controllers'], '\\/') . '/';
     }
 
     /**
@@ -117,7 +117,7 @@ class App
     protected function showErrorPage($file = '')
     {
         $error = new ErrorPage();
-        $error->page404($file, ErrorPage::NO_CONTROLLER);
+        $error->showPage('404', ErrorPage::NO_CONTROLLER, '', $file);
     }
 
     /**

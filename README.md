@@ -10,9 +10,12 @@
     - 修改web_app路徑下的libs之所有檔案
 * 2017-01-02: 
     - 資料夾目錄的結構與路徑整個重構，並使用config裡的檔案預先設定基本資料
+* 2017-01-05: 
+    - Error導向機制重構，可以更方便與擴充導向ErrorPage
 
 ### 專案預定目標
 * 下次增加:
     - 要預先做好API: 'DB自動新增database與table'
     - POST與GET的簡單範例
+    - Library裡的database class 待加上註解
 

@@ -12,34 +12,49 @@ class ErrorPage
     const NO_VIEW       = 3;
 
     protected $filePath;
-    protected $errorCode;
-    protected $errorPage = [];
+    protected $messageType;
+    protected $config = [];
 
     public function __construct()
     {
-        $config = require 'config/app.php';
-
-        $this->errorPage = $config['errorPage'];
+        $this->config = require 'config/errorPage.php';
     }
 
     /**
-     * 呼叫 views資料夾(也可自訂路徑)下的Error檔案
+     * 呼叫 Error page 的檔案或是網址列url
      *
-     * @param string $file   錯誤的檔案名稱或路徑
-     * @param string $code   錯誤代碼
+     * @param  string $httpStateCode HTTP狀態碼
+     * @param  int    $messageType   錯誤訊息的代碼
+     * @param  string $title         頁面的title
+     * @param  string $file          錯誤的檔案名稱或路徑
      */
-    public function page404($file, $code)
+    public function showPage(
+        $httpStateCode,
+        $messageType = null,
+        $title = '',
+        $file = '')
     {
-        if (!empty($this->errorPage['404'])) {
-            $this->errorCode = $code;
-            $this->filePath = $file;
+        $info = $this->config[$httpStateCode];
+        $this->messageType = $messageType;
+        $this->filePath = $file;
 
-            $title = 'Error 404';
+        $title = empty($title) ? $info['pageTitle'] : $title;
+        if (!empty($title)) {
             echo "<script> document.title = '$title'; </script>";
-
-            require_once $this->errorPage['404'];
-            exit();
         }
+
+
+        if (!empty($info['url'])) {
+            header('Location: ' . $info['url']);
+
+        } else if (!empty($info['pathFile'])) {
+            require_once $info['pathFile'];
+
+        } else {
+            echo '<br>請設定 url 或 pathFile 的參數。';
+        }
+
+        exit();
     }
 
     /**
@@ -47,7 +62,11 @@ class ErrorPage
      */
     public function errorMessage()
     {
-        switch ($this->errorCode) {
+        if (!$this->messageType) {
+            return;
+        }
+
+        switch ($this->messageType) {
             case self::NO_CONTROLLER:
                 echo "<b>[Controller]</b> 檔案: $this->filePath 不存在！<br>";
                 break;
