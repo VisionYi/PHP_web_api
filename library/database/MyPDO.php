@@ -41,21 +41,19 @@ class MyPDO
             $config = require 'config/database.php';
             $connectInfo = $config['connections'][$config['default']];
 
-            if (array_key_exists('username', $connectInfo)
-             && array_key_exists('password', $connectInfo)) {
-
-                $this->username = $connectInfo['username'];
-                $this->password = $connectInfo['password'];
-                unset($connectInfo['username']);
-                unset($connectInfo['password']);
-            }
-
             $this->dsn = '';
             $this->dsn .= $config['default'] . ':';
 
             foreach ($connectInfo as $key => $value) {
+
                 if (!empty($value)) {
-                    $this->dsn .= "$key=$value;";
+                    if ($key === 'username') {
+                        $this->username = $value;
+                    } else if ($key === 'password') {
+                        $this->password = $value;
+                    } else {
+                        $this->dsn .= "$key=$value;";
+                    }
                 }
             }
         }
