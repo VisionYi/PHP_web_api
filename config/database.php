@@ -15,5 +15,11 @@ return [
             'password' => 'mysql',          // 對應的密碼
         ],
 
+        'sqlsrv' => [
+            'Server'   => 'localhost',      // 資料庫主機名
+            'Database' => '',               // 使用的DB庫名稱
+            'username' => '',
+            'password' => '',
+        ],
     ],
 ];
