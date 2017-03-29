@@ -16,10 +16,15 @@
     - Error導向機制重構，可以更方便與擴充導向ErrorPage
 * 2017-03-10:
     - Library裡的操作database的函式類別都加上註解了
+* 2017-03-29:
+    - 修改.htaccess檔案，修改路由取得url的方式
+    - 再次重構整個目錄架構，把必要的檔案都放入core
+    - 新增配置類Conf.php，修改配置路徑
 
 ### 專案預定目標
 
 * 下次增加:
     - 要預先做好API: 'DB自動新增database與table'
     - POST與GET的簡單範例
+    - log日誌類
 
