@@ -1,8 +1,9 @@
 <?php
 
-namespace library\database;
+namespace core\lib\database;
 
-use library\database\Profiler;
+use core\lib\database\Profiler;
+use core\lib\Conf;
 use \PDO;
 use \PDOException;
 
@@ -49,11 +50,11 @@ class MyPDO
             $this->options = $options;
         } else {
 
-            $config = require 'config/database.php';
-            $connectInfo = $config['connections'][$config['default']];
+            $defaultDB = Conf::get('database', 'default');
+            $connectInfo = Conf::get('database', 'connections')[$defaultDB];
 
             $this->dsn = '';
-            $this->dsn .= $config['default'] . ':';
+            $this->dsn .= $defaultDB . ':';
 
             foreach ($connectInfo as $key => $value) {
 

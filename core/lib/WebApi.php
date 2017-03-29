@@ -1,6 +1,6 @@
 <?php
 
-namespace library;
+namespace core\lib;
 
 class WebApi
 {

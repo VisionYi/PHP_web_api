@@ -1,6 +1,6 @@
 <?php
 
-use library\database\MyPDO;
+use core\lib\database\MyPDO;
 
 class Home
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace library\database;
+namespace core\lib\database;
 
 /**
  * 資料庫解析器

@@ -1,6 +1,8 @@
 <?php
 
-namespace library;
+namespace core\lib;
+
+use core\lib\Conf;
 
 /**
  * 有錯誤就顯示 Error頁面
@@ -13,18 +15,12 @@ class ErrorPage
 
     protected $filePath;
     protected $messageType;
-    protected $config = [];
-
-    public function __construct()
-    {
-        $this->config = require 'config/errorPage.php';
-    }
 
     /**
      * 呼叫 Error page 的檔案或是網址列url
      *
      * @param  string $httpStateCode HTTP狀態碼
-     * @param  int    $messageType   錯誤訊息的代碼
+     * @param  int    $messageType   此類別的錯誤訊息之代碼
      * @param  string $title         頁面的title
      * @param  string $file          錯誤的檔案名稱或路徑
      */
@@ -34,7 +30,7 @@ class ErrorPage
         $title = '',
         $file = '')
     {
-        $info = $this->config[$httpStateCode];
+        $info = Conf::get('errorPage', $httpStateCode);
         $this->messageType = $messageType;
         $this->filePath = $file;
 
@@ -43,7 +39,7 @@ class ErrorPage
             echo "<script> document.title = '$title'; </script>";
         }
 
-
+        // 已url網址為優先使用
         if (!empty($info['url'])) {
             header('Location: ' . $info['url']);
 
@@ -51,7 +47,7 @@ class ErrorPage
             require_once $info['pathFile'];
 
         } else {
-            echo '<br>請設定 url 或 pathFile 的參數。';
+            throw new \Exception("請設定 url 或 pathFile 的參數。");
         }
 
         exit();

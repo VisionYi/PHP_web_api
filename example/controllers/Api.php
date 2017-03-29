@@ -1,11 +1,11 @@
 <?php
 
-use library\database\MyPDO;
-use library\WebApi;
+use core\lib\database\MyPDO;
+use core\lib\WebApi;
 
 class Api extends WebApi
 {
-    protected $DB;
+    private $DB;
 
     public function __construct()
     {
@@ -24,8 +24,6 @@ class Api extends WebApi
 
         // Debug: 檢測印出的資訊是否符合JSON格式，使用HTTP header顯示錯誤代碼與資訊
         /* $this->checkJsonErrorHeader(500, "Internal Server Error!!"); */
-
-        exit();
     }
 
     public function get($field = '')
@@ -43,12 +41,15 @@ class Api extends WebApi
         $this->DB->getProfiler()->setActive(true);
 
         $record1 = $this->DB->query("SELECT api_name From test_api where api_data_int >:QQ",['QQ' => 125]);
-        $record2 = $this->DB->exec("SELECT api_name From test_api where api_data_int >10");
 
         $s = $this->DB->getProfiler()->getContents();
         var_export($s);
         var_dump($record1);
-        var_dump($record2);
         */
+    }
+
+    public function test($value='')
+    {
+        prints($this);
     }
 }

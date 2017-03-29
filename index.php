@@ -7,9 +7,15 @@
  * @dateTime 2016-08-26 10:22:13
  */
 
-// Auto loading all library php file
+// Auto loading all php file
 require_once __DIR__ . '/autoload.php';
 
-$app = new \library\App();
+// 加載公共函式庫
+require_once __DIR__ . '/core/common/function.php';
 
+// 定義常量
+define('CONFIG_DIR', __DIR__ . '/core/config');
+
+// 啟動框架
+$app = new \core\lib\App();
 $app->run();

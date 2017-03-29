@@ -1,8 +1,9 @@
 <?php
 
-namespace library;
+namespace core\lib;
 
-use library\ErrorPage;
+use core\lib\ErrorPage;
+use core\lib\Conf;
 
 /**
  * 1. 解析url 呼叫類別裡的方法函式
@@ -22,13 +23,14 @@ class App
 
     public function __construct()
     {
-        $config = require 'config/app.php';
-
+        $config = Conf::get('app');
         $this->initial($config);
     }
 
     /**
      * 啟動這個webApi
+     * new controller類別，再把方法裡的params參數 依序帶入url[2].url[3]..的每個數值
+     * 註: controller類別裡的方法的每個參數都要有預設值喔！
      */
     public function run()
     {
@@ -62,9 +64,10 @@ class App
     /**
      * 檢查偵錯url網址列是否有存在檔案路徑、類別、方法
      * 如果其中一個有錯就會導向errorPage，不會繼續error過後的程序
+     * 如果url[0]存在的話，就會加載(require_once)這個Controller的檔案路徑($pathFile)
      *
-     * @param  array  $url url網址，以'/'分開後的所存入的陣列
-     * @return string      完整檔案路徑
+     * @param  array  $url       url網址，以'/'分開後的所存入的陣列
+     * @return string $pathFile  完整檔案路徑
      */
     protected function checkUrlExist(array $url)
     {
@@ -76,13 +79,13 @@ class App
             $path = $this->pathControllers . $url[0];
             $pathFile = "$path.php";
 
-            if (file_exists($pathFile)) {
+            if (is_file($pathFile)) {
                 $this->controller = $url[0];
             } else {
                 $this->showErrorPage($pathFile);
             }
 
-        } else if (!file_exists($pathFile)) {
+        } else if (!is_file($pathFile)) {
             $this->showErrorPage($pathFile);
         }
 
@@ -110,6 +113,23 @@ class App
     }
 
     /**
+     * 抓取網址上的Url，濾掉GET與hash字符
+     * 再以'/'間隔分成好幾個字放進array()裡，順便過濾多餘的'/'
+     *
+     * @return array url網址，以'/'分開後的所存入的陣列
+     */
+    protected function parseUrl()
+    {
+        $url = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
+
+        if (!empty($url)) {
+            return explode('/', trim($url, '/'));
+        } else {
+            return [];
+        }
+    }
+
+    /**
      * 乎叫ErrorPage這個library->page404()
      *
      * @param string $file 完整名稱或完整的路徑
@@ -118,25 +138,5 @@ class App
     {
         $error = new ErrorPage();
         $error->showPage('404', ErrorPage::NO_CONTROLLER, '', $file);
-    }
-
-    /**
-     * 抓取網址上的Url,再以'/'間隔分成好幾個字放進array()裡 ,順便過濾多餘的'/'
-     *
-     * @return array url網址，以'/'分開後的所存入的陣列
-     */
-    protected function parseUrl()
-    {
-        if (isset($_GET['url'])) {
-            return explode(
-                '/',
-                filter_var(
-                    rtrim($_GET['url'], '/'),
-                    FILTER_SANITIZE_URL
-                )
-            );
-        } else {
-            return [];
-        }
     }
 }
