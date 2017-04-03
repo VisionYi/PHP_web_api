@@ -4,7 +4,7 @@ return [
 
     '404' => [
         'pageTitle' => 'Error 404',
-        'pathFile'  => 'example/views/Error404.php',
+        'filePath'  => BASE_DIR . '/example/views/Error404.php',
         'url'       => '',
     ],
 

@@ -14,7 +14,8 @@ require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/core/common/function.php';
 
 // 定義常量
-define('CONFIG_DIR', __DIR__ . '/core/config');
+define('CONFIG_DIR', __DIR__ . '/config');
+define('BASE_DIR', __DIR__);
 
 // 啟動框架
 $app = new \core\lib\App();

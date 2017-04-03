@@ -15,28 +15,28 @@ class Conf
      * 找不到配置文件或配置項時，丟出Exception例外
      *
      * @param  string      $name 配置文件名
-     * @param  string|null $key  配置项名
+     * @param  string|null $key  配置項名稱
      * @return mixed             返回配置內容
      */
-    public static function get($fileName, $key = null)
+    public static function get($filename, $key = null)
     {
-        $pathfile = CONFIG_DIR . '/' . $fileName . '.php';
+        $pathfile = CONFIG_DIR . '/' . $filename . '.php';
 
         if (!is_file($pathfile)) {
-            throw new \Exception("Error: 沒有配置的檔案 ", $fileName);
+            throw new \Exception("Error: 沒有配置的檔案 ", $filename);
         }
 
-        if (!isset(self::$configs[$fileName])) {
-            self::$configs[$fileName] = require $pathfile;
+        if (!isset(self::$configs[$filename])) {
+            self::$configs[$filename] = require $pathfile;
         }
 
-        $config = self::$configs[$fileName];
+        $config = self::$configs[$filename];
 
         if (!is_null($key)) {
             if (isset($config[$key])) {
                 return $config[$key];
             } else {
-                throw new \Exception("Error: 沒有這個配置項 ", $fileName);
+                throw new \Exception("Error: 沒有這個配置項 ", $filename);
             }
         } else {
             return $config;

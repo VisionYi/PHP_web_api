@@ -20,11 +20,13 @@
     - 修改.htaccess檔案，修改路由取得url的方式
     - 再次重構整個目錄架構，把必要的檔案都放入core
     - 新增配置類Conf.php，修改配置路徑
+* 2017-04-02:
+    - 新增日誌類Log.php
+    - 新增共用函式庫的dump_debug函式，專用Debug
 
 ### 專案預定目標
 
 * 下次增加:
     - 要預先做好API: 'DB自動新增database與table'
     - POST與GET的簡單範例
-    - log日誌類
 

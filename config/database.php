@@ -2,9 +2,9 @@
 
 return [
 
-    'default'     => 'mysql',
+    'default_type'     => 'mysql',
 
-    'connections' => [
+    'PDO_connections' => [
 
         'mysql' => [
             'host'     => 'localhost',      // 資料庫主機名
@@ -16,8 +16,8 @@ return [
         ],
 
         'sqlsrv' => [
-            'Server'   => 'localhost',      // 資料庫主機名
-            'Database' => '',               // 使用的DB庫名稱
+            'server'   => 'localhost',      // 資料庫主機名
+            'database' => '',               // 使用的DB庫名稱
             'username' => '',
             'password' => '',
         ],

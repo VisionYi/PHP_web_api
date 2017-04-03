@@ -50,8 +50,8 @@ class MyPDO
             $this->options = $options;
         } else {
 
-            $defaultDB = Conf::get('database', 'default');
-            $connectInfo = Conf::get('database', 'connections')[$defaultDB];
+            $defaultDB = Conf::get('database', 'default_type');
+            $connectInfo = Conf::get('database', 'PDO_connections')[$defaultDB];
 
             $this->dsn = '';
             $this->dsn .= $defaultDB . ':';
@@ -87,9 +87,7 @@ class MyPDO
                 $this->dsn, $this->username, $this->password, $this->options
             );
         } catch (PDOException $e) {
-            $error_msg = "PDO connection failed !! <br>Error: " . $e->getMessage();
-            echo $error_msg;
-            exit();
+            echo "Database connection failed !!<br>Error: " . $e->getMessage();
         }
     }
 
@@ -129,7 +127,7 @@ class MyPDO
      * ex: query("SELECT column FORM table WHERE column_int > :num", ['num' => 10])
      *
      * @param  string $statment  SQL語句
-     * @param  array  $bind_data 綁定的資料
+     * @param  array  $bind_data 綁定的資料 (可選填)
      * @return array             正確: 查詢的所有資料 fetchAll(PDO::FETCH_ASSOC)
      *         bool              錯誤: 語句錯誤或資料有問題就回傳false
      */
@@ -147,11 +145,13 @@ class MyPDO
      * SQL的新增語句，$data為欄位名稱與資料，已自動防止sql injection了
      * ex: insert('table', ['column_1' => 'name', 'column_2' => 10])
      *
-     * @param  string $table 資料表名稱
-     * @param  array  $data  [欄位名稱 => 資料內容]
-     * @return bool          是否執行成功
+     * @param  string $table  資料表名稱
+     * @param  array  $data   [欄位名稱 => 資料內容]
+     * @param  string $nameId id欄位名稱 (可選填)
+     * @return string         正確: 回傳插入的$nameId內容或預設的id
+     *         bool           錯誤: 語句錯誤或資料有問題就回傳false
      */
-    public function insert($table = '', array $data = [])
+    public function insert($table = '', array $data = [], $nameId = null)
     {
         $bind_data = [];
         foreach ($data as $key => $value) {
@@ -167,7 +167,7 @@ class MyPDO
         $this->endProfiler(__FUNCTION__, $statment, $bind_data);
         $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
 
-        return $result;
+        return ($result) ? $this->pdo->lastInsertId($nameId) : $result;
     }
 
     /**
@@ -177,7 +177,8 @@ class MyPDO
      * @param  string $table       資料表名稱
      * @param  array  $data        [欄位名稱 => 資料內容]
      * @param  string $whereClause sql的where語句
-     * @return bool                是否執行成功
+     * @return int                 正確: 回傳受影響的資料筆數
+     *         bool                錯誤: 語句錯誤或資料有問題就回傳false
      */
     public function update($table = '', array $data = [], $whereClause = '')
     {
@@ -195,7 +196,7 @@ class MyPDO
         $this->endProfiler(__FUNCTION__, $statment, $bind_data);
         $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
 
-        return $result;
+        return ($result) ? $this->stm->rowCount() : $result;
     }
 
     /**
@@ -204,8 +205,9 @@ class MyPDO
      *
      * @param  string $table       資料表名稱
      * @param  string $whereClause sql的where語句
-     * @param  array  $bind_data   綁定的資料
-     * @return bool                是否執行成功
+     * @param  array  $bind_data   綁定的資料 (可選填)
+     * @return int                 正確: 回傳受影響的資料筆數
+     *         bool                錯誤: 語句錯誤或資料有問題就回傳false
      */
     public function delete($table = '', $whereClause = '', array $bind_data = [])
     {
@@ -216,7 +218,7 @@ class MyPDO
         $this->endProfiler(__FUNCTION__, $statment, $bind_data);
         $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
 
-        return $result;
+        return ($result) ? $this->stm->rowCount() : $result;
     }
 
     /**
@@ -301,7 +303,7 @@ class MyPDO
      * @param bool  $debugDB   是否要顯示檢測的結果
      * @param bool  $showTrace 是否要顯示追蹤的檔案路徑
      */
-    public function setDebugDB(bool $debugDB, bool $showTrace = false)
+    public function setDebug(bool $debugDB, bool $showTrace = false)
     {
         $this->debugDB = $debugDB;
         $this->debugDB_trace = $showTrace;
@@ -310,7 +312,7 @@ class MyPDO
     /**
      * 取得 PDO參數
      */
-    public function getPdo()
+    public function getPDO()
     {
         return $this->pdo;
     }
@@ -318,7 +320,7 @@ class MyPDO
     /**
      * 取得 PDO的預處理語句的參數
      */
-    public function getPrepare_stm()
+    public function getPDOStm()
     {
         return $this->stm;
     }
@@ -369,10 +371,10 @@ class MyPDO
      */
     protected function endProfiler(
         $fun_name,
-        $statement = null,
+        $statement = '',
         array $bind_data = null
     ) {
-        $errorMsg = ($bind_data) ? $this->errorMsg($this->stm) : $this->errorMsg();
+        $error = is_null($bind_data) ? $this->errorMsg() : $this->errorMsg($this->stm);
 
         if ($this->profiler) {
             // add an entry to the profiler
@@ -381,7 +383,7 @@ class MyPDO
                 $fun_name,
                 $statement,
                 $bind_data,
-                $errorMsg
+                $error
             );
         }
     }
@@ -397,15 +399,15 @@ class MyPDO
     protected function showDebugMsg(
         $result,
         $fun_name,
-        $statement = null,
+        $statement = '',
         array $bind_data = null
     ) {
         if (false === $result && $this->debugDB) {
 
             $e = new PDOException;
-            $errorMsg = ($bind_data) ? $this->errorMsg($this->stm) : $this->errorMsg();
+            $error = is_null($bind_data) ? $this->errorMsg() : $this->errorMsg($this->stm);
 
-            echo "<br>======debugDB======";
+            echo "<br>======DB debug======";
             echo "<br># Function: $fun_name";
             echo "<br># SQL: $statement";
 
@@ -414,8 +416,8 @@ class MyPDO
                 var_export($bind_data);
             }
 
-            if (!empty($errorMsg)) {
-                echo "<br># Error: $errorMsg";
+            if (!empty($error)) {
+                echo "<br># Error: $error";
             }
 
             if ($this->debugDB_trace) {

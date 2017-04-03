@@ -26,28 +26,26 @@ class ErrorPage
      */
     public function showPage(
         $httpStateCode,
-        $messageType = null,
-        $title = '',
-        $file = '')
+        $messageType,
+        $filePath,
+        $title = null)
     {
         $info = Conf::get('errorPage', $httpStateCode);
         $this->messageType = $messageType;
-        $this->filePath = $file;
+        $this->filePath = $filePath;
 
-        $title = empty($title) ? $info['pageTitle'] : $title;
-        if (!empty($title)) {
-            echo "<script> document.title = '$title'; </script>";
-        }
+        $title = is_null($title) ? $info['pageTitle'] : $title;
+        echo "<script> document.title = '$title'; </script>";
 
         // 已url網址為優先使用
         if (!empty($info['url'])) {
             header('Location: ' . $info['url']);
 
-        } else if (!empty($info['pathFile'])) {
-            require_once $info['pathFile'];
+        } else if (file_exists($info['filePath'])) {
+            require_once $info['filePath'];
 
         } else {
-            throw new \Exception("請設定 url 或 pathFile 的參數。");
+            throw new \Exception('請設定\'url\'或\'filePath\'的參數。');
         }
 
         exit();
@@ -77,7 +75,6 @@ class ErrorPage
 
             default:
                 echo "<b>Expection Error!!!</b>";
-                break;
         }
     }
 }

@@ -22,7 +22,7 @@ class Profiler
     public function addContent(
         $time,
         $fun_name,
-        $statement = null,
+        $statement = '',
         array $bind_data = null,
         $error = null
     ) {

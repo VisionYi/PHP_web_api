@@ -6,3 +6,6 @@ ehthumbs.db
 # sumbile_text3 的專案設定檔
 PHP_web_api.sublime-project
 PHP_web_api.sublime-workspace
+
+# log file
+logs/*

@@ -58,7 +58,7 @@ class App
         $this->controller = $defaultUrl[0];
         $this->method = $defaultUrl[1];
 
-        $this->pathControllers = trim($config['path']['controllers'], '\\/') . '/';
+        $this->pathControllers = rtrim($config['path']['controllers'], '\\/') . '/';
     }
 
     /**
@@ -132,11 +132,11 @@ class App
     /**
      * 乎叫ErrorPage這個library->page404()
      *
-     * @param string $file 完整名稱或完整的路徑
+     * @param string $filePath 完整名稱或完整的路徑
      */
-    protected function showErrorPage($file = '')
+    protected function showErrorPage($filePath = '')
     {
         $error = new ErrorPage();
-        $error->showPage('404', ErrorPage::NO_CONTROLLER, '', $file);
+        $error->showPage('404', ErrorPage::NO_CONTROLLER, $filePath);
     }
 }

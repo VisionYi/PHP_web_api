@@ -2,6 +2,7 @@
 
 use core\lib\database\MyPDO;
 use core\lib\WebApi;
+use core\lib\Log;
 
 class Api extends WebApi
 {
@@ -10,20 +11,15 @@ class Api extends WebApi
     public function __construct()
     {
         $this->DB = new MyPDO();
+        $this->log = new Log();
 
         // Debug: 檢測SQL的語法錯誤
-        $this->DB->setDebugDB(false);
+        $this->DB->setDebug(false);
     }
 
     public function __destruct()
     {
         $this->DB->closeDB();
-
-        // Debug: 檢測印出的資訊是否符合JSON格式，使用JavaScript的console.error()
-        $this->checkJsonErrorLog(false);
-
-        // Debug: 檢測印出的資訊是否符合JSON格式，使用HTTP header顯示錯誤代碼與資訊
-        /* $this->checkJsonErrorHeader(500, "Internal Server Error!!"); */
     }
 
     public function get($field = '')
@@ -40,16 +36,9 @@ class Api extends WebApi
         $this->DB->setProfiler(new \library\database\Profiler);
         $this->DB->getProfiler()->setActive(true);
 
-        $record1 = $this->DB->query("SELECT api_name From test_api where api_data_int >:QQ",['QQ' => 125]);
+        $record = $this->DB->query("SELECT api_name From test_api where api_data_int >:QQ",['QQ' => 125]);
 
-        $s = $this->DB->getProfiler()->getContents();
-        var_export($s);
-        var_dump($record1);
+        $content = $this->DB->getProfiler()->getContents();
         */
-    }
-
-    public function test($value='')
-    {
-        prints($this);
     }
 }
