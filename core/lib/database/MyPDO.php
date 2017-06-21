@@ -8,7 +8,7 @@ use \PDO;
 use \PDOException;
 
 /**
- * 操作資料庫的延伸型PDO類別
+ * 操作資料庫的延伸型 PDO 類別
  */
 class MyPDO
 {
@@ -19,7 +19,7 @@ class MyPDO
     protected $pdo;
     protected $stm;
 
-    // 在子類別裡設為true,能檢測debug所有sql指令並顯示錯誤
+    // 在子類別裡設為 true, 能檢測 debug 所有 sql 指令並顯示錯誤
     protected $debugDB       = false;
     protected $debugDB_trace = false;
 
@@ -27,21 +27,21 @@ class MyPDO
     protected $profiler;
 
     /**
-     * 初始化資料庫的基本資料 & 串接PDO的dsn設定
-     * 1. 可以直接輸入參數dsn、username、password、options的設定
+     * 初始化資料庫的基本資料與串接 PDO 的 dsn 設定
+     * 1. 可以直接輸入參數 dsn、username、password、options 的設定
      * 2. 可以都不輸入參數，使用自己預設的設定，檔案路徑為 config/database.php
      * 3. 最後自動連結資料庫
      *
-     * @param string $dsn      PDO的dsn
+     * @param string $dsn      PDO 的 dsn
      * @param string $username 資料庫的連接用戶名
      * @param string $password 資料庫的密碼
-     * @param array  $options  PDO的options額外設定
+     * @param array  $options  PDO 的 options 額外設定
      */
     public function __construct(
         $dsn = null,
         $username = null,
         $password = null,
-        array $options = []
+        array $options = null
     ) {
         if ($dsn) {
             $this->dsn = $dsn;
@@ -78,7 +78,7 @@ class MyPDO
     }
 
     /**
-     * 連結資料庫，如有錯誤會跳PDOException例外處理
+     * 連結資料庫，如有錯誤會跳 PDOException 例外處理
      */
     protected function connect()
     {
@@ -92,17 +92,17 @@ class MyPDO
     }
 
     /**
-     * 使用PDO的prepare函式，如果$bind_data有參數不是[]，會使用到PDO的bindValue函式
-     * 會使用到PDO的預處理語句PDOStatment類 ($this->stm)
-     * 最後回傳PDOStatment類的execute()，執行SQL語句是否成功
+     * 使用 PDO 的 prepare 函式，如果 $bind_data 有參數不是 []，會使用到 PDO 的 bindValue 函式
+     * 會使用到 PDO 的預處理語句 PDOStatement ($this->stm)
+     * 最後回傳 PDOStatement 類的 execute()，執行 SQL 語句是否成功
      *
-     * @param  string $statment  SQL語句
+     * @param  string $statement  SQL 語句
      * @param  array  $bind_data 綁定的資料
-     * @return bool              執行SQL語句是否成功
+     * @return bool              執行 SQL 語句是否成功
      */
-    protected function prepareBind($statment = '', array $bind_data = [])
+    protected function prepareBind($statement = '', array $bind_data = [])
     {
-        $this->stm = $this->pdo->prepare($statment);
+        $this->stm = $this->pdo->prepare($statement);
 
         foreach ($bind_data as $key => $value) {
             if (is_int($value)) {
@@ -123,33 +123,33 @@ class MyPDO
     }
 
     /**
-     * SQL的查詢語句，使用$bind_data可以防止sql injection
+     * SQL的查詢語句，使用 $bind_data 可以防止 sql injection
      * ex: query("SELECT column FORM table WHERE column_int > :num", ['num' => 10])
      *
-     * @param  string $statment  SQL語句
+     * @param  string $statement  SQL 語句
      * @param  array  $bind_data 綁定的資料 (可選填)
      * @return array             正確: 查詢的所有資料 fetchAll(PDO::FETCH_ASSOC)
-     *         bool              錯誤: 語句錯誤或資料有問題就回傳false
+     *         bool              錯誤: 語句錯誤或資料有問題就回傳 false
      */
-    public function query($statment = '', array $bind_data = [])
+    public function query($statement = '', array $bind_data = [])
     {
         $this->startProfiler();
-        $result = $this->prepareBind($statment, $bind_data);
-        $this->endProfiler(__FUNCTION__, $statment, $bind_data);
-        $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
+        $result = $this->prepareBind($statement, $bind_data);
+        $this->endProfiler(__FUNCTION__, $statement, $bind_data);
+        $this->showDebugMsg($result, __FUNCTION__, $statement, $bind_data);
 
         return ($result) ? $this->stm->fetchAll(PDO::FETCH_ASSOC) : $result;
     }
 
     /**
-     * SQL的新增語句，$data為欄位名稱與資料，已自動防止sql injection了
+     * SQL 的新增語句，$data 為欄位名稱與資料，已自動防止 sql injection
      * ex: insert('table', ['column_1' => 'name', 'column_2' => 10])
      *
      * @param  string $table  資料表名稱
      * @param  array  $data   [欄位名稱 => 資料內容]
-     * @param  string $nameId id欄位名稱 (可選填)
-     * @return string         正確: 回傳插入的$nameId內容或預設的id
-     *         bool           錯誤: 語句錯誤或資料有問題就回傳false
+     * @param  string $nameId id 欄位名稱 (可選填)
+     * @return string         正確: 回傳插入的 $nameId 內容或預設的 id
+     *         bool           錯誤: 語句錯誤或資料有問題就回傳 false
      */
     public function insert($table = '', array $data = [], $nameId = null)
     {
@@ -160,25 +160,25 @@ class MyPDO
 
         $columns = array_keys($data);
         $bind_key = array_keys($bind_data);
-        $statment = "INSERT INTO {$table} (" . implode(',', $columns) . ") VALUES (" . implode(',', $bind_key) . ")";
+        $statement = "INSERT INTO {$table} (" . implode(',', $columns) . ") VALUES (" . implode(',', $bind_key) . ")";
 
         $this->startProfiler();
-        $result = $this->prepareBind($statment, $bind_data);
-        $this->endProfiler(__FUNCTION__, $statment, $bind_data);
-        $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
+        $result = $this->prepareBind($statement, $bind_data);
+        $this->endProfiler(__FUNCTION__, $statement, $bind_data);
+        $this->showDebugMsg($result, __FUNCTION__, $statement, $bind_data);
 
         return ($result) ? $this->pdo->lastInsertId($nameId) : $result;
     }
 
     /**
-     * SQL的修改語句，$data為欄位名稱與資料，已自動防止sql injection了
+     * SQL 的修改語句，$data 為欄位名稱與資料，已自動防止 sql injection
      * ex: update('table', ['column_1' => 'name', 'column_2' => 10], "id = '001'")
      *
      * @param  string $table       資料表名稱
      * @param  array  $data        [欄位名稱 => 資料內容]
-     * @param  string $whereClause sql的where語句
+     * @param  string $whereClause sql where 語句
      * @return int                 正確: 回傳受影響的資料筆數
-     *         bool                錯誤: 語句錯誤或資料有問題就回傳false
+     *         bool                錯誤: 語句錯誤或資料有問題就回傳 false
      */
     public function update($table = '', array $data = [], $whereClause = '')
     {
@@ -189,56 +189,56 @@ class MyPDO
             $bind_data[":$key"] = $value;
         }
 
-        $statment = "UPDATE {$table} SET " . implode(',', $bind_temp) . " WHERE {$whereClause}";
+        $statement = "UPDATE {$table} SET " . implode(',', $bind_temp) . " WHERE {$whereClause}";
 
         $this->startProfiler();
-        $result = $this->prepareBind($statment, $bind_data);
-        $this->endProfiler(__FUNCTION__, $statment, $bind_data);
-        $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
+        $result = $this->prepareBind($statement, $bind_data);
+        $this->endProfiler(__FUNCTION__, $statement, $bind_data);
+        $this->showDebugMsg($result, __FUNCTION__, $statement, $bind_data);
 
         return ($result) ? $this->stm->rowCount() : $result;
     }
 
     /**
-     * SQL的刪除語句，使用$bind_data可以防止sql injection
+     * SQL 的刪除語句，使用 $bind_data 可以防止 sql injection
      * ex: delete('table', "column_1 = 'test' AND column_2 > :num", ['num' => 10])
      *
      * @param  string $table       資料表名稱
-     * @param  string $whereClause sql的where語句
+     * @param  string $whereClause sql where 語句
      * @param  array  $bind_data   綁定的資料 (可選填)
      * @return int                 正確: 回傳受影響的資料筆數
-     *         bool                錯誤: 語句錯誤或資料有問題就回傳false
+     *         bool                錯誤: 語句錯誤或資料有問題就回傳 false
      */
     public function delete($table = '', $whereClause = '', array $bind_data = [])
     {
-        $statment = "DELETE FROM {$table} WHERE {$whereClause}";
+        $statement = "DELETE FROM {$table} WHERE {$whereClause}";
 
         $this->startProfiler();
-        $result = $this->prepareBind($statment, $bind_data);
-        $this->endProfiler(__FUNCTION__, $statment, $bind_data);
-        $this->showDebugMsg($result, __FUNCTION__, $statment, $bind_data);
+        $result = $this->prepareBind($statement, $bind_data);
+        $this->endProfiler(__FUNCTION__, $statement, $bind_data);
+        $this->showDebugMsg($result, __FUNCTION__, $statement, $bind_data);
 
         return ($result) ? $this->stm->rowCount() : $result;
     }
 
     /**
-     * 直接使用PDO的exec()函式
+     * 直接使用 PDO 的 exec()
      *
-     * @param  string $statment SQL語句
-     * @return int              回傳受影響的資料筆數
+     * @param  string $statement SQL 語句
+     * @return int               回傳受影響的資料筆數
      */
-    public function exec($statment = '')
+    public function exec($statement = '')
     {
         $this->startProfiler();
-        $affected_rows = $this->pdo->exec($statment);
-        $this->endProfiler(__FUNCTION__, $statment);
-        $this->showDebugMsg($affected_rows, __FUNCTION__, $statment);
+        $affected_rows = $this->pdo->exec($statement);
+        $this->endProfiler(__FUNCTION__, $statement);
+        $this->showDebugMsg($affected_rows, __FUNCTION__, $statement);
 
         return $affected_rows;
     }
 
     /**
-     * 回傳執行"SELECT found_rows()"的語句之結果，前個搜尋query時的資料總筆數
+     * 回傳執行 "SELECT found_rows()" 的語句之結果，前個搜尋 query 時的資料總筆數
      *
      * @return int 資料筆數
      */
@@ -258,7 +258,7 @@ class MyPDO
     }
 
     /**
-     * PDO的beginTransaction()函式
+     * PDO beginTransaction()
      *
      * @return bool 成功或失敗
      */
@@ -271,7 +271,7 @@ class MyPDO
     }
 
     /**
-     * PDO的commit()函式
+     * PDO commit()
      *
      * @return bool 成功或失敗
      */
@@ -284,7 +284,7 @@ class MyPDO
     }
 
     /**
-     * PDO的rollBack()函式
+     * PDO rollBack()
      *
      * @return bool 成功或失敗
      */
@@ -297,8 +297,8 @@ class MyPDO
     }
 
     /**
-     * 是否要開啟debug功能，檢測SQL的語法錯誤，另外在debug時是否要顯示出追蹤的檔案路徑
-     * 如果開了卻沒顯示出來，代表目前SQL都沒有錯誤
+     * 是否要開啟 debug 功能，檢測 SQL 的語法錯誤，另外在 debug 時是否要顯示出追蹤的檔案路徑
+     * 如果開了卻沒顯示出來，代表目前 SQL 都沒有錯誤
      *
      * @param bool  $debugDB   是否要顯示檢測的結果
      * @param bool  $showTrace 是否要顯示追蹤的檔案路徑
@@ -310,7 +310,7 @@ class MyPDO
     }
 
     /**
-     * 取得 PDO參數
+     * 取得 PDO 參數
      */
     public function getPDO()
     {
@@ -318,7 +318,7 @@ class MyPDO
     }
 
     /**
-     * 取得 PDO的預處理語句的參數
+     * 取得 PDO 的預處理語句的參數
      */
     public function getPDOStm()
     {
@@ -326,7 +326,7 @@ class MyPDO
     }
 
     /**
-     * 取得 PDO的dsn設定參數
+     * 取得 PDO dsn 設定參數
      */
     public function getDsn()
     {
@@ -344,7 +344,7 @@ class MyPDO
     /**
      * 加入資料庫解析器
      *
-     * @param Profiler $profiler 資料庫解析器class
+     * @param Profiler $profiler 資料庫解析器 class
      */
     public function setProfiler(Profiler $profiler)
     {
@@ -363,10 +363,10 @@ class MyPDO
 
     /**
      * 結束解析器的計算時間
-     * 會把所以有資訊及錯誤放入解析器中(類式Log紀錄器)
+     * 會把所以有資訊及錯誤放入解析器中(類式 Log 紀錄器)
      *
-     * @param  string     $fun_name   所使用的SQL語法function之名稱
-     * @param  string     $statement  所使用的SQL語句
+     * @param  string     $fun_name   所使用的 SQL 語法 function 之名稱
+     * @param  string     $statement  所使用的 SQL 語句
      * @param  array|null $bind_data  所綁定的資料
      */
     protected function endProfiler(
@@ -389,11 +389,11 @@ class MyPDO
     }
 
     /**
-     * 此為顯示SQL語法錯誤的訊息，由debugDB此參數所驅動，都附在所有的SQL語句function裡
+     * 此為顯示 SQL 語法錯誤的訊息，由 debugDB 此參數所驅動，都附在所有的 SQL 語句函式裡
      *
-     * @param  bool       $result     做SQL語法時會有的執行是否成功
-     * @param  string     $fun_name   所使用的SQL語法function之名稱
-     * @param  string     $statement  所使用的SQL語句
+     * @param  bool       $result     做 SQL 語法時會有的執行是否成功
+     * @param  string     $fun_name   所使用的 SQL 語法函式之名稱
+     * @param  string     $statement  所使用的 SQL 語句
      * @param  array|null $bind_data  所綁定的資料
      */
     protected function showDebugMsg(
@@ -430,7 +430,7 @@ class MyPDO
     }
 
     /**
-     * 從PDO裡取得錯誤資訊
+     * 從 PDO 裡取得錯誤資訊
      *
      * @param  statement $stm 預處理的語句內容
      * @return string         錯誤訊息

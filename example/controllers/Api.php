@@ -13,7 +13,7 @@ class Api extends WebApi
         $this->DB = new MyPDO();
         $this->log = new Log();
 
-        // Debug: 檢測SQL的語法錯誤
+        // Debug: 檢測 SQL 的語法錯誤
         $this->DB->setDebug(false);
     }
 
@@ -31,14 +31,20 @@ class Api extends WebApi
             echo '$field = ' . $field . '<br>';
         }
 
-        // 以下測試用的，測DB的library是否有效
+        // 以下測試用的，測 DB 的 library 是否有效
         /*
-        $this->DB->setProfiler(new \library\database\Profiler);
+        $this->DB->setProfiler(new \core\lib\database\Profiler);
         $this->DB->getProfiler()->setActive(true);
 
         $record = $this->DB->query("SELECT api_name From test_api where api_data_int >:QQ",['QQ' => 125]);
 
         $content = $this->DB->getProfiler()->getContents();
-        */
+         */
+    }
+
+    public function index()
+    {
+        $record = $this->DB->query("SELECT * From test_api where api_data_int > :QQ",['QQ' => 100]);
+        $this->output($record);
     }
 }

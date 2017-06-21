@@ -8,12 +8,12 @@ use core\lib\Conf;
 /**
  * 1. 解析url 呼叫類別裡的方法函式
  * 2. ex: http://localhost/u1/u2/u3
- *     先呼叫controllers資料夾下的u1.php，u1這個類別
- *     再呼叫裡面的u2 方法 function
- *     再取function($u3='') 直接得到u3得value
+ *     先呼叫 controllers 資料夾下的 u1.php u1 這個類別
+ *     再呼叫裡面的 u2 方法 function
+ *     再取 function($u3='') 直接得到 u3 value
  *
- * 3. 沒輸入url的話, 預設為 $config裡的['defaultUrl']
- * 4. 資料夾不存在會有error判斷，導向errorPage
+ * 3. 沒輸入 url 的話, 預設為 $config 裡的 ['defaultUrl']
+ * 4. 資料夾不存在會有 error 判斷，導向 errorPage
  */
 class App
 {
@@ -28,9 +28,9 @@ class App
     }
 
     /**
-     * 啟動這個webApi
-     * new controller類別，再把方法裡的params參數 依序帶入url[2].url[3]..的每個數值
-     * 註: controller類別裡的方法的每個參數都要有預設值喔！
+     * 啟動 webApi
+     * new controller 類別，再把方法裡的 params 參數依序帶入 url[2].url[3]..的每個數值
+     * 註: controller 類別裡的方法的每個參數都要有預設值喔！
      */
     public function run()
     {
@@ -50,7 +50,7 @@ class App
     /**
      * 初始化這個類別的所有宣告參數
      *
-     * @param array $config 取得設定的config
+     * @param array $config 取得設定的 config
      */
     protected function initial(array $config)
     {
@@ -62,11 +62,11 @@ class App
     }
 
     /**
-     * 檢查偵錯url網址列是否有存在檔案路徑、類別、方法
-     * 如果其中一個有錯就會導向errorPage，不會繼續error過後的程序
-     * 如果url[0]存在的話，就會加載(require_once)這個Controller的檔案路徑($pathFile)
+     * 檢查偵錯 url 網址列是否有存在檔案路徑、類別、方法
+     * 如果其中一個有錯就會導向 errorPage，不會繼續 error 過後的程序
+     * 如果 url[0] 存在的話，就會加載(require_once)這個 Controller 的檔案路徑($pathFile)
      *
-     * @param  array  $url       url網址，以'/'分開後的所存入的陣列
+     * @param  array  $url       url 網址，以'/'分開後的所存入的陣列
      * @return string $pathFile  完整檔案路徑
      */
     protected function checkUrlExist(array $url)
@@ -91,7 +91,7 @@ class App
 
         require_once $pathFile;
 
-        // 檢查檔案的類別是否存在，class_exists()的第2參數為 autoload是否要啟動
+        // 檢查檔案的類別是否存在，class_exists() 的第 2 參數為 autoload 是否要啟動
         if (!class_exists($this->controller, false)) {
             $this->showErrorPage("$pathFile, " . $this->controller . ' 類別');
         }
@@ -113,10 +113,10 @@ class App
     }
 
     /**
-     * 抓取網址上的Url，濾掉GET與hash字符
-     * 再以'/'間隔分成好幾個字放進array()裡，順便過濾多餘的'/'
+     * 抓取網址上的Url，濾掉 GET & hash 字符
+     * 再以'/'間隔分成好幾個字放進 array() 裡，順便過濾多餘的'/'
      *
-     * @return array url網址，以'/'分開後的所存入的陣列
+     * @return array url 網址，以'/'分開後的所存入的陣列
      */
     protected function parseUrl()
     {
@@ -130,7 +130,7 @@ class App
     }
 
     /**
-     * 乎叫ErrorPage這個library->page404()
+     * 乎叫 ErrorPage library->page404()
      *
      * @param string $filePath 完整名稱或完整的路徑
      */

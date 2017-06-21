@@ -5,7 +5,7 @@
  * 適用於 PHP 5.3.0 以後的版本
  *
  * @author https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
- * @author VisionYi (加入$fileExtension做附檔名判斷)
+ * @author VisionYi (加入 $fileExtension 做附檔名判斷)
  */
 function autoload($className) {
 

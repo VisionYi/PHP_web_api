@@ -11,11 +11,11 @@ class Profiler
     protected $contents = [];
 
     /**
-     * 把所有資訊與錯誤內容都加到 $contents此陣列變數裡
+     * 把所有資訊與錯誤內容都加到 $contents 此陣列變數裡
      *
-     * @param float      $time       處理SQL語句所耗費的時間
-     * @param string     $fun_name   所使用的SQL語法function之名稱
-     * @param string     $statement  所使用的SQL語句
+     * @param float      $time       處理 SQL 語句所耗費的時間
+     * @param string     $fun_name   所使用的 SQL 語法函式之名稱
+     * @param string     $statement  所使用的 SQL 語句
      * @param array|null $bind_data  所綁定的資料
      * @param string     $error      錯誤訊息
      */
@@ -42,7 +42,7 @@ class Profiler
     }
 
     /**
-     * 取得 解析器的$contents所有資料
+     * 取得 解析器的 $contents 所有資料
      */
     public function getContents()
     {

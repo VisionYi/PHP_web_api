@@ -5,7 +5,7 @@ namespace core\lib;
 use core\lib\Conf;
 
 /**
- * 有錯誤就顯示 Error頁面
+ * 有錯誤就顯示 Error 頁面
  */
 class ErrorPage
 {
@@ -17,11 +17,11 @@ class ErrorPage
     protected $messageType;
 
     /**
-     * 呼叫 Error page 的檔案或是網址列url
+     * 呼叫 Error page 的檔案或是網址列 url
      *
-     * @param  string $httpStateCode HTTP狀態碼
+     * @param  string $httpStateCode HTTP 狀態碼
      * @param  int    $messageType   此類別的錯誤訊息之代碼
-     * @param  string $title         頁面的title
+     * @param  string $title         頁面的 title
      * @param  string $file          錯誤的檔案名稱或路徑
      */
     public function showPage(
@@ -52,7 +52,7 @@ class ErrorPage
     }
 
     /**
-     * 此function是給 views資料夾(也可自訂路徑)下的Error檔案使用的，顯示出個別的錯誤訊息.
+     * 此函式是給 views 資料夾(也可自訂路徑)下的 Error 檔案使用的，顯示出個別的錯誤訊息
      */
     public function errorMessage()
     {
@@ -74,7 +74,7 @@ class ErrorPage
                 break;
 
             default:
-                echo "<b>Expection Error!!!</b>";
+                echo "<b>Exception Error!!!</b>";
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 自製PHP web_api (簡易框架 + 操作資料庫的library)
+ * 自製 PHP web_api (簡易框架 + 操作資料庫的 library)
  *
  * @author Shane Yi
  * @dateTime 2016-08-26 10:22:13
